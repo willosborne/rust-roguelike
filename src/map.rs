@@ -85,7 +85,8 @@ fn place_objects(room: &Rect, map: &Map, objects: &mut Vec<Object>) {
                     max_hp: 10,
                     hp: 10,
                     defence: 0,
-                    attack: 3
+                    attack: 3,
+                    on_death: DeathCallback::Monster
                 });
                 orc.ai = Some(Ai::Basic);
                 orc
@@ -95,7 +96,8 @@ fn place_objects(room: &Rect, map: &Map, objects: &mut Vec<Object>) {
                     max_hp: 16,
                     hp: 16,
                     defence: 1,
-                    attack: 4
+                    attack: 4,
+                    on_death: DeathCallback::Monster
                 });
                 troll.ai = Some(Ai::Basic);
                 troll
@@ -103,6 +105,18 @@ fn place_objects(room: &Rect, map: &Map, objects: &mut Vec<Object>) {
 
             monster.alive = true;
             objects.push(monster);
+        }
+    }
+
+    let num_items = rand::thread_rng().gen_range(0, MAX_ROOM_ITEMS + 1);
+    for _ in 0..num_items {
+        let x = rand::thread_rng().gen_range(room.x1 + 1, room.x2);
+        let y = rand::thread_rng().gen_range(room.y1 + 1, room.y2);
+
+        if !is_blocked(x, y, map, objects) {
+            let mut object = Object::new(x, y, '!', "healing potion", VIOLET, false);
+            object.item = Some(Item::Heal);
+            objects.push(object);
         }
     }
 }
